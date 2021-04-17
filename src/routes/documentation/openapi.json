@@ -1,0 +1,733 @@
+{
+	"openapi": "3.0.2",
+	"info": {
+		"title": "Shopping Cart API",
+		"description": "Describes the API for Shopping Cart application.",
+		"contact": {
+			"name": "Sidnei Lechado",
+			"email": "sidneilechado.dev@gmail.com"
+		},
+		"version": "1.0.0"
+	},
+	"components": {
+		"schemas": {
+			"User": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "number"
+					},
+					"name": {
+						"type": "string"
+					},
+					"cpf": {
+						"type": "string"
+					}
+				}
+			},
+			"Store": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "number"
+					},
+					"name": {
+						"type": "string"
+					},
+					"products": {
+						"type": "array",
+						"items": {
+							"$ref": "#components/schemas/Product"
+						}
+					},
+					"orders": {
+						"type": "array",
+						"items": {
+							"$ref": "#components/schemas/Order"
+						}
+					},
+					"coupons": {
+						"type": "array",
+						"items": {
+							"$ref": "#components/schemas/Coupon"
+						}
+					}
+				}
+			},
+			"Product": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "number"
+					},
+					"name": {
+						"type": "string"
+					},
+					"price": {
+						"type": "number"
+					},
+					"stockQuantity": {
+						"type": "number"
+					}
+				}
+			},
+			"Order": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "number"
+					},
+					"totalPrice": {
+						"type": "number"
+					},
+					"couponValue": {
+						"type": "number"
+					},
+					"status": {
+						"type": "string"
+					},
+					"products": {
+						"type": "array",
+						"items": {
+							"$ref": "#components/schemas/Product"
+						}
+					},
+					"user": {
+						"$ref": "#components/schemas/User"
+					},
+					"store": {
+						"$ref": "#components/schemas/Store"
+					}
+				}
+			},
+			"Coupon": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "number"
+					},
+					"tag": {
+						"type": "string"
+					},
+					"value": {
+						"type": "number"
+					}
+				}
+			}
+		},
+		"responses": {
+			"InternalError": {
+				"description": "An internal error happened while processing the request (500)",
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"properties": {
+								"message": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			},
+			"InvalidData": {
+				"description": "The request could not be completed, due to an error while validating the given data",
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"properties": {
+								"message": {
+									"type": "string",
+									"example": "Order doesn't exists"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"paths": {
+		"/api/user/create": {
+			"post": {
+				"operationId": "createUser",
+				"summary": "Creates an user",
+				"tags": [
+					"user"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string"
+									},
+									"cpf": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "User successfully created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#components/schemas/User"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/user/list": {
+			"get": {
+				"operationId": "listUsers",
+				"summary": "List all users",
+				"tags": [
+					"user"
+				],
+				"responses": {
+					"200": {
+						"description": "List of users",
+						"content": {
+							"application/json": {
+								"schema": {
+									"type": "array",
+									"items": {
+										"$ref": "#components/schemas/User"
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/store/create": {
+			"post": {
+				"operationId": "createStore",
+				"summary": "Creates a store",
+				"tags": [
+					"store"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Store successfully created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#components/schemas/Store"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/store/{id}": {
+			"post": {
+				"operationId": "getStore",
+				"summary": "Get information from a particular store",
+				"tags": [
+					"store"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "params",
+						"description": "Store id to be retrieved",
+						"required": true,
+						"schema": {
+							"type": "number"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Store successfully retrieved",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#components/schemas/Store"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#components/responses/InvalidData"
+					}
+				}
+			}
+		},
+		"/api/product/create": {
+			"post": {
+				"operationId": "createProduct",
+				"summary": "Creates a product",
+				"tags": [
+					"product"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"name": {
+										"type": "string"
+									},
+									"price": {
+										"type": "number"
+									},
+									"stockQuantity": {
+										"type": "number"
+									},
+									"storeId": {
+										"type": "number"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Product successfully created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#components/schemas/Product"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/product/update": {
+			"post": {
+				"operationId": "updateProduct",
+				"summary": "Update product information",
+				"tags": [
+					"product"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"productId": {
+										"type": "string"
+									},
+									"name": {
+										"type": "string"
+									},
+									"price": {
+										"type": "number"
+									},
+									"stockQuantity": {
+										"type": "number"
+									},
+									"storeId": {
+										"type": "number"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Product successfully updated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#components/schemas/Product"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#components/responses/InvalidData"
+					}
+				}
+			}
+		},
+		"/api/coupon/create": {
+			"post": {
+				"operationId": "createCoupon",
+				"summary": "Create a coupon",
+				"tags": [
+					"coupon"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"tag": {
+										"type": "string"
+									},
+									"value": {
+										"type": "string"
+									},
+									"storeId": {
+										"type": "string"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Coupon successfully updated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#components/schemas/Coupon"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/cart/create": {
+			"post": {
+				"operationId": "createCart",
+				"summary": "Creates a cart",
+				"tags": [
+					"cart"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"userId": {
+										"type": "string"
+									},
+									"storeId": {
+										"type": "number"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Order successfully created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#components/schemas/Order"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/cart/update": {
+			"post": {
+				"operationId": "updateCart",
+				"summary": "Updates a cart content, alter product quantities",
+				"tags": [
+					"cart"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"userId": {
+										"type": "string"
+									},
+									"storeId": {
+										"type": "number"
+									},
+									"orderId": {
+										"type": "number"
+									},
+									"productId": {
+										"type": "number"
+									},
+									"qty": {
+										"type": "integer"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Order successfully updated",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#components/schemas/Order"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#components/responses/InvalidData"
+					}
+				}
+			}
+		},
+		"/api/cart/remove": {
+			"post": {
+				"operationId": "removeProductCart",
+				"summary": "Removes product completely from cart",
+				"tags": [
+					"cart"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"userId": {
+										"type": "string"
+									},
+									"orderId": {
+										"type": "number"
+									},
+									"productId": {
+										"type": "number"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Product successfully removed",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#components/schemas/Order"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#components/responses/InvalidData"
+					}
+				}
+			}
+		},
+		"/api/cart/coupon": {
+			"post": {
+				"operationId": "applyCoupon",
+				"summary": "Applies coupon to cart",
+				"tags": [
+					"cart"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"tag": {
+										"type": "string"
+									},
+									"orderId": {
+										"type": "number"
+									},
+									"userId": {
+										"type": "number"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Coupon successfully applied",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#components/schemas/Order"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#components/responses/InvalidData"
+					}
+				}
+			}
+		},
+		"/api/cart/persist": {
+			"post": {
+				"operationId": "persistCart",
+				"summary": "Persists cart",
+				"tags": [
+					"cart"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"orderId": {
+										"type": "number"
+									},
+									"userId": {
+										"type": "number"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Cart successfully persisted",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#components/schemas/Order"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#components/responses/InvalidData"
+					}
+				}
+			}
+		},
+		"/api/cart/{id}": {
+			"get": {
+				"operationId": "getCart",
+				"summary": "Retrieves a cart",
+				"tags": [
+					"cart"
+				],
+				"parameters": [
+					{
+						"name": "id",
+						"in": "params",
+						"description": "Cart id to be retrieved",
+						"required": true,
+						"schema": {
+							"type": "number"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Cart successfully retrieved",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#components/schemas/Order"
+								}
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/cart/clear": {
+			"delete": {
+				"operationId": "clearCartProducts",
+				"summary": "Clear cart's products",
+				"tags": [
+					"cart"
+				],
+				"requestBody": {
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"orderId": {
+										"type": "number"
+									},
+									"userId": {
+										"type": "number"
+									}
+								}
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "Cart successfully cleared",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#components/schemas/Order"
+								}
+							}
+						}
+					},
+					"400": {
+						"$ref": "#components/responses/InvalidData"
+					}
+				}
+			}
+		}
+	},
+	"tags": [
+		{
+			"name": "user",
+			"description": "API related to user management"
+		},
+		{
+			"name": "store",
+			"description": "API related to store management"
+		},
+		{
+			"name": "product",
+			"description": "API related to product management"
+		},
+		{
+			"name": "coupon",
+			"description": "API related to coupon management"
+		},
+		{
+			"name": "cart",
+			"description": "API related to cart management"
+		}
+	]
+}
