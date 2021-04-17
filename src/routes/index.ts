@@ -11,7 +11,10 @@ import swaggerDocument from './documentation/openapi.json';
 export default function (): Router {
 	const router = Router();
 
+
+	router.use('/product', product());
 	router.use('/user', user());
+	router.use('/store', store());
 	router.use('/worker', worker());
 	router.use('/documentation', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

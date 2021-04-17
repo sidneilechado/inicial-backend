@@ -1,6 +1,12 @@
 import {
-	Entity, PrimaryGeneratedColumn, Column, OneToMany, UpdateDateColumn, CreateDateColumn
+	Entity,
+	PrimaryGeneratedColumn,
+	Column,
+	OneToMany,
+	UpdateDateColumn,
+	CreateDateColumn
 } from 'typeorm';
+
 import Order from './Order';
 
 export interface Address {

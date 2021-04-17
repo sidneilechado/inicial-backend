@@ -11,7 +11,9 @@ export default class Product {
 	@Column()
 	name: string;
 
-	@Column()
+	@Column({
+		type: "float"
+	})
 	price: number;
 
 	@Column({
