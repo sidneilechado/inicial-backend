@@ -9,6 +9,10 @@ import {
 
 import Order from './Order';
 
+export enum paymentMethods {
+	money = 'money',
+	bank = 'bank'
+}
 export interface Address {
 	street: string;
 	number: number;
@@ -18,12 +22,15 @@ export interface Address {
 	obs: string;
 }
 
-export interface BankAccount {
-	account: string;
-	agency: string;
-	bank: string;
-	cpf: string;
-	owner: string;
+export interface paymentInfo {
+	method: paymentMethods,
+	bankAccount: {
+		account: string;
+		agency: string;
+		bank: string;
+		cpf: string;
+		owner: string;
+	}
 }
 
 @Entity()
@@ -43,7 +50,7 @@ export default class Worker {
 	@Column({
 		type: 'jsonb',
 	})
-	bankAccount: BankAccount;
+	paymentInfo: paymentInfo;
 
 	@Column({
 		type: 'jsonb',

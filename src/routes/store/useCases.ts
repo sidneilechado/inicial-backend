@@ -29,7 +29,7 @@ export async function getStore(req: Request, res: Response, next: NextFunction):
 		const { id } = req.params;
 
 		const store = await storeRepository.findOne({
-			relations: ['products', 'coupons', 'orders'],
+			relations: ['products', 'orders'],
 			where: {
 				id,
 			},

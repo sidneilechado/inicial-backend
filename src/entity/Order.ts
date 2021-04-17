@@ -13,7 +13,8 @@ export interface OrderableItem {
 export enum orderStatus {
 	active = 'active',
 	completed = 'completed',
-	canceled = 'canceled'
+	delivered = 'delivered',
+	canceled = 'canceled',
 }
 
 @Entity()
@@ -33,12 +34,6 @@ export default class Order {
 		nullable: false,
 	})
 	products: Array<OrderableItem>;
-
-	@Column({
-		default: 0,
-		type: 'float',
-	})
-	couponValue: number;
 
 	@Column({
 		type: 'enum',

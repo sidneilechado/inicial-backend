@@ -11,7 +11,7 @@ export async function createWorker(req: Request, res: Response, next: NextFuncti
 			name,
 			cpf,
 			cnpj,
-			bankAccount,
+			paymentInfo,
 			address,
 		} = req.body;
 
@@ -31,7 +31,7 @@ export async function createWorker(req: Request, res: Response, next: NextFuncti
 			name,
 			cpf,
 			cnpj,
-			bankAccount,
+			paymentInfo,
 			address,
 		});
 
@@ -52,7 +52,7 @@ export async function modifyWorker(req: Request, res: Response, next: NextFuncti
 			name,
 			cpf,
 			cnpj,
-			bankAccount,
+			paymentInfo,
 			address,
 			isActive,
 		} = req.body;
@@ -71,7 +71,7 @@ export async function modifyWorker(req: Request, res: Response, next: NextFuncti
 		worker.name = name;
 		worker.cpf = cpf;
 		worker.cnpj = cnpj;
-		worker.bankAccount = bankAccount;
+		worker.paymentInfo = paymentInfo;
 		worker.address = address;
 		worker.isActive = isActive;
 		worker.updatedAt = new Date();
